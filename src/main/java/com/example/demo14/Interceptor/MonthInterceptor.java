@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Component
 public class MonthInterceptor implements HandlerInterceptor {
-    private List<Month> listedMonthsInInterceptor = addMonthsInList();
+    private final List<Month> listedMonthsInInterceptor = addMonthsInList();
 
     private List<Month> addMonthsInList() {
         List<Month> fullListMonths = new ArrayList<>();
@@ -40,13 +40,13 @@ public class MonthInterceptor implements HandlerInterceptor {
         }
 
         // String to int per cercare il mese nella lista!
-        Integer monthNumber = Integer.parseInt(monthNumberString);
+        int monthNumber = Integer.parseInt(monthNumberString);
 
         //if monthNumber is present in the list, returns it using a specific request attribute
-        //returns an empty Month with all the string values set to nope
+        //returns an empty Month with all the string values set to nope + status OK
 
         Optional<Month> monthFounded = listedMonthsInInterceptor.stream()
-                .filter(month -> {return month.getMonthNumber() == monthNumber;}).findFirst();
+                .filter(month -> month.getMonthNumber() == monthNumber).findFirst();
 
         if(monthFounded.isPresent()){
             //questo è il request attribute che torno se lo trovo!
@@ -54,9 +54,8 @@ public class MonthInterceptor implements HandlerInterceptor {
         }else{
             //questo è l'empty month che torno se non trova il mese
             Month emptyMonth = new Month(0, "nope", "nope", "nope");
-            request.setAttribute("empty month", emptyMonth);
+            request.setAttribute("month", emptyMonth);
         }
-        //returns an HTTP OK status
         response.setStatus(HttpStatus.OK.value());
         return true;
     }
